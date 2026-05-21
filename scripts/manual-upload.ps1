@@ -1,19 +1,7 @@
 <#
 .SYNOPSIS
-    Commit and push an image already placed in the repo, then print its jsDelivr URLs.
-
-.PARAMETER RelativePath
-    Path to the image relative to the repo root (e.g. "portfolio/hero.jpg").
-
-.EXAMPLE
-    .\scripts\manual-upload.ps1 -RelativePath "portfolio/hero.jpg"
+    Scan the repo for new/modified images, commit them all, push, and print jsDelivr URLs.
 #>
-
-[CmdletBinding()]
-param(
-    [Parameter(Mandatory = $true)]
-    [string]$RelativePath
-)
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
@@ -26,28 +14,38 @@ $BASE_CDN_URL = "https://cdn.jsdelivr.net/gh/$REPO_OWNER/$REPO_NAME"
 
 $SUPPORTED_EXTENSIONS = @(".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".avif", ".ico")
 
-# Normalise to forward slashes
-$RelativePath = $RelativePath.Replace("\", "/").Trim("/")
-
-$FullPath = Join-Path $REPO_ROOT ($RelativePath.Replace("/", "\"))
-
-if (-not (Test-Path $FullPath)) {
-    Write-Error "File not found in repo: $RelativePath"
-    exit 1
-}
-
-$ext = [System.IO.Path]::GetExtension($RelativePath).ToLower()
-if ($ext -notin $SUPPORTED_EXTENSIONS) {
-    Write-Error "Unsupported file type '$ext'. Supported: $($SUPPORTED_EXTENSIONS -join ', ')"
-    exit 1
-}
-
 Push-Location $REPO_ROOT
 try {
-    git add $RelativePath
-    if ($LASTEXITCODE -ne 0) { Write-Error "git add failed"; exit 1 }
+    # Find all new/modified files via git status
+    $statusLines = git status --porcelain
+    if ($LASTEXITCODE -ne 0) { Write-Error "git status failed"; exit 1 }
 
-    git commit -m "upload: $RelativePath"
+    $imagePaths = $statusLines | ForEach-Object {
+        $line = $_.Trim()
+        # Format: "XY path" — extract path after status chars
+        $path = ($line -replace '^.{2}\s+', '').Replace('"', '').Replace("\", "/")
+        $ext  = [System.IO.Path]::GetExtension($path).ToLower()
+        if ($ext -in $SUPPORTED_EXTENSIONS) { $path }
+    } | Where-Object { $_ }
+
+    if (-not $imagePaths) {
+        Write-Host "No new or modified images found." -ForegroundColor Yellow
+        exit 0
+    }
+
+    Write-Host "Found $($imagePaths.Count) image(s):" -ForegroundColor Cyan
+    $imagePaths | ForEach-Object { Write-Host "  $_" }
+    Write-Host ""
+
+    foreach ($path in $imagePaths) {
+        git add $path
+        if ($LASTEXITCODE -ne 0) { Write-Error "git add failed for: $path"; exit 1 }
+    }
+
+    $fileList = $imagePaths -join ", "
+    $commitMsg = if ($imagePaths.Count -eq 1) { "upload: $($imagePaths[0])" } else { "upload: $($imagePaths.Count) images" }
+
+    git commit -m $commitMsg
     if ($LASTEXITCODE -ne 0) { Write-Error "git commit failed"; exit 1 }
 
     git push origin $BRANCH
@@ -59,18 +57,14 @@ finally {
     Pop-Location
 }
 
-$UrlMain   = "$BASE_CDN_URL@$BRANCH/$RelativePath"
-$UrlCommit = "$BASE_CDN_URL@$CommitHash/$RelativePath"
-
 Write-Host ""
 Write-Host "=== Upload complete ===" -ForegroundColor Green
+Write-Host "  Commit: $CommitHash"
 Write-Host ""
-Write-Host "  File        : $RelativePath"
-Write-Host "  Commit      : $CommitHash"
-Write-Host ""
-Write-Host "  CDN URL (@main):" -ForegroundColor Cyan
-Write-Host "  $UrlMain"
-Write-Host ""
-Write-Host "  CDN URL (@commit) [cache-stable]:" -ForegroundColor Cyan
-Write-Host "  $UrlCommit"
-Write-Host ""
+
+foreach ($path in $imagePaths) {
+    Write-Host "  $path" -ForegroundColor White
+    Write-Host "  @main   : $BASE_CDN_URL@$BRANCH/$path" -ForegroundColor Cyan
+    Write-Host "  @commit : $BASE_CDN_URL@$CommitHash/$path" -ForegroundColor DarkCyan
+    Write-Host ""
+}

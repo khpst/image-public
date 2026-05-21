@@ -40,14 +40,14 @@ The script copies the file, commits, pushes, and prints the jsDelivr URLs automa
 
 ### Option B — Manual
 
-1. Copy the image into the repo at the desired path, e.g. `portfolio/hero.jpg`
-2. Run:
+1. Copy images into the repo at the desired paths
+2. Run (no arguments needed):
 
 ```powershell
-.\scripts\manual-upload.ps1 -RelativePath "portfolio/hero.jpg"
+.\scripts\manual-upload.ps1
 ```
 
-The script commits, pushes, and prints the jsDelivr URLs automatically.
+The script scans for all new/modified images, commits them all in one commit, pushes, and prints jsDelivr URLs for each file.
 
 ## Supported Formats
 
