@@ -1,8 +1,13 @@
 {
-  "generated_at": "2026-05-21T07:34:09Z",
+  "generated_at": "2026-05-21T07:46:12Z",
   "base_url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main",
-  "image_count": 1,
+  "image_count": 2,
   "images": [
+    {
+      "project": "test",
+      "path": "test/a1tsK.jpg",
+      "url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main/test/a1tsK.jpg"
+    },
     {
       "project": "test",
       "path": "test/drawing.png",
