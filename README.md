@@ -44,26 +44,10 @@ The script copies the file, commits, pushes, and prints the jsDelivr URLs automa
 2. Run:
 
 ```powershell
-git add portfolio/hero.jpg
-git commit -m "upload: portfolio/hero.jpg"
-git push origin main
+.\scripts\manual-upload.ps1 -RelativePath "portfolio/hero.jpg"
 ```
 
-3. Get the commit hash for a cache-stable URL:
-
-```powershell
-git rev-parse HEAD
-```
-
-4. Build the URL:
-
-```
-# @main
-https://cdn.jsdelivr.net/gh/khpst/image-public@main/portfolio/hero.jpg
-
-# @commit (cache-stable)
-https://cdn.jsdelivr.net/gh/khpst/image-public@<commit-hash>/portfolio/hero.jpg
-```
+The script commits, pushes, and prints the jsDelivr URLs automatically.
 
 ## Supported Formats
 
