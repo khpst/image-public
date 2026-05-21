@@ -1,27 +1,6 @@
 {
-  "generated_at": "2026-05-21T07:48:25Z",
+  "generated_at": "2026-05-21T07:50:00Z",
   "base_url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main",
-  "image_count": 4,
-  "images": [
-    {
-      "project": "test",
-      "path": "test/a1tsK.jpg",
-      "url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main/test/a1tsK.jpg"
-    },
-    {
-      "project": "test",
-      "path": "test/drawing.png",
-      "url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main/test/drawing.png"
-    },
-    {
-      "project": "test",
-      "path": "test/sub/OeyAo.jpg",
-      "url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main/test/sub/OeyAo.jpg"
-    },
-    {
-      "project": "demo",
-      "path": "demo/a1tsK.jpg",
-      "url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main/demo/a1tsK.jpg"
-    }
-  ]
+  "image_count": 0,
+  "images": []
 }
