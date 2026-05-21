@@ -17,16 +17,16 @@ $SUPPORTED_EXTENSIONS = @(".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg", ".av
 Push-Location $REPO_ROOT
 try {
     # Find all new/modified files via git status
-    $statusLines = git status --porcelain
+    $statusLines = git status --porcelain -uall
     if ($LASTEXITCODE -ne 0) { Write-Error "git status failed"; exit 1 }
 
-    $imagePaths = $statusLines | ForEach-Object {
+    $imagePaths = @($statusLines | ForEach-Object {
         $line = $_.Trim()
         # Format: "XY path" — extract path after status chars
         $path = ($line -replace '^.{2}\s+', '').Replace('"', '').Replace("\", "/")
         $ext  = [System.IO.Path]::GetExtension($path).ToLower()
         if ($ext -in $SUPPORTED_EXTENSIONS) { $path }
-    } | Where-Object { $_ }
+    } | Where-Object { $_ })
 
     if (-not $imagePaths) {
         Write-Host "No new or modified images found." -ForegroundColor Yellow
@@ -47,6 +47,9 @@ try {
 
     git commit -m $commitMsg
     if ($LASTEXITCODE -ne 0) { Write-Error "git commit failed"; exit 1 }
+
+    git pull origin $BRANCH --rebase --quiet
+    if ($LASTEXITCODE -ne 0) { Write-Error "git pull --rebase failed"; exit 1 }
 
     git push origin $BRANCH
     if ($LASTEXITCODE -ne 0) { Write-Error "git push failed"; exit 1 }
