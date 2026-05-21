@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-05-21T07:47:00Z",
+  "generated_at": "2026-05-21T07:48:25Z",
   "base_url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main",
-  "image_count": 5,
+  "image_count": 4,
   "images": [
     {
       "project": "test",
@@ -22,11 +22,6 @@
       "project": "demo",
       "path": "demo/a1tsK.jpg",
       "url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main/demo/a1tsK.jpg"
-    },
-    {
-      "project": "demo",
-      "path": "demo/sub/OeyAo.jpg",
-      "url": "https://cdn.jsdelivr.net/gh/khpst/image-public@main/demo/sub/OeyAo.jpg"
     }
   ]
 }
