@@ -26,6 +26,8 @@ Each project owns its own top-level folder.
 
 ## Uploading an Image
 
+### Option A — Script (automatic)
+
 ```powershell
 # Basic
 .\scripts\upload.ps1 -ImagePath "C:\images\hero.jpg" -Project "portfolio"
@@ -34,7 +36,34 @@ Each project owns its own top-level folder.
 .\scripts\upload.ps1 -ImagePath "C:\images\cover.jpg" -Project "blog" -Subfolder "post-1"
 ```
 
-The script prints jsDelivr URLs after a successful push.
+The script copies the file, commits, pushes, and prints the jsDelivr URLs automatically.
+
+### Option B — Manual
+
+1. Copy the image into the repo at the desired path, e.g. `portfolio/hero.jpg`
+2. Run:
+
+```powershell
+git add portfolio/hero.jpg
+git commit -m "upload: portfolio/hero.jpg"
+git push origin main
+```
+
+3. Get the commit hash for a cache-stable URL:
+
+```powershell
+git rev-parse HEAD
+```
+
+4. Build the URL:
+
+```
+# @main
+https://cdn.jsdelivr.net/gh/khpst/image-public@main/portfolio/hero.jpg
+
+# @commit (cache-stable)
+https://cdn.jsdelivr.net/gh/khpst/image-public@<commit-hash>/portfolio/hero.jpg
+```
 
 ## Supported Formats
 
